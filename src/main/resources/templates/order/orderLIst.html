@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+  </head>
+  <body>
+    <h1 class="text-center my-4">Product</h1>
+
+    <a href="/order/create" class="btn btn-success mb-3">Tambah Order</a>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID Order</th>
+          <th scope="col">ID User</th>
+          <th scope="col">Cashier</th>
+          <th scope="col">Date</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="order : ${orders}">
+          <td th:text="${order.idOrder}"></td>
+          <td th:text="${order.user.idUser}"></td>
+          <td th:text="${order.user.name}"></td>
+          <td th:text="${order.orderDate}"></td>
+          <td style="white-space:nowrap">
+            <a class="btn btn-primary btn-sm"  
+                th:href="@{/order/edit(idOrder=${order.idOrder})}">Edit</a>
+            <a class="btn btn-danger btn-sm"
+                th:href="@{/order/delete(idOrder=${order.idOrder})}"
+                onclick="return confirm('Are you sure?')">Delete</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    </form>
+  </body>
+</html>

@@ -32,7 +32,7 @@ public class product {
     private String image;
     private int stock;
 
-    public int getId() {
+    public int getIdProduct() {
         return idProduct;
     }
     public String getName() {
@@ -51,7 +51,8 @@ public class product {
         return stock;
     }
 
-    public void setId(int idProduct) {
+    
+    public void setIdProduct(int idProduct) {
         this.idProduct = idProduct;
     }
     public void setName(String name) {

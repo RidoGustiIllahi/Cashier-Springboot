@@ -24,7 +24,7 @@
       </thead>
       <tbody>
         <tr th:each="product : ${products}">
-          <td th:text="${product.id}"></td>
+          <td th:text="${product.idProduct}"></td>
           <td th:text="${product.name}"></td>
           <td>
             <img th:src="@{'/image/' + ${product.image}}" alt="..." width="100">
@@ -34,9 +34,9 @@
           <td th:text="${product.stock}"></td>
           <td style="white-space:nowrap">
             <a class="btn btn-primary btn-sm"  
-                th:href="@{/product/edit(id=${product.id})}">Edit</a>
+                th:href="@{/product/edit(idProduct=${product.idProduct})}">Edit</a>
             <a class="btn btn-danger btn-sm"
-                th:href="@{/product/delete(id=${product.id})}"
+                th:href="@{/product/delete(idProduct=${product.idProduct})}"
                 onclick="return confirm('Are you sure?')">Delete</a>
           </td>
         </tr>

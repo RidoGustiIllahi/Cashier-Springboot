@@ -22,7 +22,7 @@
       </thead>
       <tbody>
         <tr th:each="user : ${users}">
-          <td th:text="${user.id}"></td>
+          <td th:text="${user.idUser}"></td>
           <td th:text="${user.name}"></td>
           <td>
             <img th:src="@{'/image/' + ${user.profile}}" alt="..." width="100">
@@ -31,9 +31,9 @@
           <td th:text="${user.password}"></td>
           <td style="white-space:nowrap">
             <a class="btn btn-primary btn-sm"  
-                th:href="@{/user/edit(id=${user.id})}">Edit</a>
+                th:href="@{/user/edit(idUser=${user.idUser})}">Edit</a>
             <a class="btn btn-danger btn-sm"
-                th:href="@{/user/delete(id=${user.id})}"
+                th:href="@{/user/delete(idUser=${user.idUser})}"
                 onclick="return confirm('Are you sure?')">Delete</a>
           </td>
         </tr>

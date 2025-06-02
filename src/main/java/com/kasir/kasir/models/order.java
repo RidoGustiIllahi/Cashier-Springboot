@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 @Entity
 @Table(name = "orders")
@@ -15,7 +17,10 @@ public class order {
     private int idOrder;
     
     private String orderDate;
-    private String idUser;
+    
+    @ManyToOne
+    @JoinColumn(name = "idUser")
+    private user user;
     
     public int getIdOrder() {
         return idOrder;
@@ -23,8 +28,8 @@ public class order {
     public String getOrderDate() {
         return orderDate;
     }
-    public String getIdUser() {
-        return idUser;
+    public user getUser() {
+        return user;
     }
     public void setIdOrder(int idOrder) {
         this.idOrder = idOrder;
@@ -32,7 +37,7 @@ public class order {
     public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
+    public void setUser(user user) {
+        this.user = user;
     }
 }
