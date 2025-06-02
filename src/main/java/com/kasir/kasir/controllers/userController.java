@@ -20,50 +20,50 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kasir.kasir.models.product;
-import com.kasir.kasir.models.productDto;
-import com.kasir.kasir.repository.productRepository;
+import com.kasir.kasir.models.user;
+import com.kasir.kasir.models.userDto;
+import com.kasir.kasir.repository.userRepository;
 
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/product")
+@RequestMapping("/user")
 
-public class productController {
+public class userController {
 
     @Autowired
-    private productRepository productRepo;
+    private userRepository userRepo;
 
     @GetMapping({"", "/"})
-    public String showProductsList(Model model) {
-        List<product> products = productRepo.findAll();
-        model.addAttribute("products", products);
-        return "product/productsList";
+    public String showUsersList(Model model) {
+        List<user> users = userRepo.findAll();
+        model.addAttribute("users", users);
+        return "user/userList";
     }
 
     @GetMapping("/create")
-    public String showCreateProductForm(Model model) {
-        productDto productDto = new productDto();
-        model.addAttribute("productDto", productDto);
-        return "product/createProduct";
+    public String showCreateUserForm(Model model) {
+        userDto userDto = new userDto();
+        model.addAttribute("userDto", userDto);
+        return "user/createUser";
     }
 
     @PostMapping("/create")
-    public String createProduct(
-            @Valid @ModelAttribute productDto productDto,
+    public String createUser(
+            @Valid @ModelAttribute userDto userDto,
             BindingResult result 
             ) {
         
-        if (productDto.getImage().isEmpty()) {
-            result.addError(new FieldError("productDto", "image", "Gambar tidak boleh kosong"));
+        if (userDto.getProfile().isEmpty()) {
+            result.addError(new FieldError("userDto", "profile", "Gambar tidak boleh kosong"));
         }
 
         if (result.hasErrors()) {
-            return "product/createProduct";
+            return "user/createUser";
         }
 
 
-        MultipartFile image = productDto.getImage();
+        MultipartFile image = userDto.getProfile();
         Date createdAt = new Date();
         String storageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
         try {
@@ -72,7 +72,7 @@ public class productController {
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
-            }
+            }   
 
             try (InputStream inputStream = image.getInputStream()) {
                 Files.copy(inputStream, Paths.get(uploadDir + storageFileName),
@@ -83,18 +83,18 @@ public class productController {
         }
 
 
-        product product = new product();
-        product.setName(productDto.getName());
-        product.setImage(storageFileName);
-        product.setPrice(productDto.getPrice());
-        product.setDescription(productDto.getDescription());
-        product.setStock(productDto.getStock());
+        user user = new user();
+        user.setName(userDto.getName());
+        user.setProfile(storageFileName);
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
+        user.setRole(userDto.getRole());
 
-        productRepo.save(product); 
+        userRepo.save(user); 
 
-        return "redirect:/product";
+        return "redirect:/user";
     }
-    
+
     @GetMapping("/edit")
     public String showEditPage(
             Model model,
@@ -102,43 +102,43 @@ public class productController {
         ) {
 
         try {
-            product product = productRepo.findById(id).get();
-            model.addAttribute("product", product);
+            user user = userRepo.findById(id).get();
+            model.addAttribute("user", user);
 
-            productDto productDto = new productDto();
-            productDto.setName(product.getName());
-            productDto.setPrice(product.getPrice());
-            productDto.setDescription(product.getDescription());
-            productDto.setStock(product.getStock());
+            userDto userDto = new userDto();
+            userDto.setName(user.getName());
+            userDto.setUsername(user.getUsername());
+            userDto.setPassword(user.getPassword());
+            userDto.setRole(user.getRole());
 
-            model.addAttribute("productDto", productDto);
+            model.addAttribute("userDto", userDto);
         }
         catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
-            return "redirect:/product";
+            return "redirect:/user";
         }
-        return "product/editProduct";
+        return "user/editUser";
     }
-
+    
     @PostMapping("/edit")
-    public String editProduct(
+    public String editUser(
             Model model,
             @RequestParam int id,
-            @Valid @ModelAttribute productDto productDto,
+            @Valid @ModelAttribute userDto userDto,
             BindingResult result
             ) {
 
         try {
-            product product = productRepo.findById(id).get();
-            model.addAttribute("product", product);
+            user user = userRepo.findById(id).get();
+            model.addAttribute("user", user);
             
             if (result.hasErrors()) {
-                return "product/editProduct";
+                return "user/editUser";
             }
 
-            if (!productDto.getImage().isEmpty()){
+            if (!userDto.getProfile().isEmpty()){
                 String uploadDir = "public/image/";
-                Path oldImagePath = Paths.get(uploadDir + product.getImage());
+                Path oldImagePath = Paths.get(uploadDir + user.getProfile());
 
                 try {
                     Files.deleteIfExists(oldImagePath);
@@ -147,7 +147,7 @@ public class productController {
                     System.out.println("Exception: " + e.getMessage());
                 }
 
-                MultipartFile image = productDto.getImage();
+                MultipartFile image = userDto.getProfile();
                 Date createdAt = new Date();
                 String storageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
 
@@ -156,32 +156,32 @@ public class productController {
                             StandardCopyOption.REPLACE_EXISTING);
                 } 
 
-                product.setImage(storageFileName);
+                user.setProfile(storageFileName);
             }
 
-            product.setName(productDto.getName());
-            product.setPrice(productDto.getPrice());
-            product.setDescription(productDto.getDescription());
-            product.setStock(productDto.getStock());
+            user.setName(userDto.getName());
+            user.setUsername(userDto.getUsername());
+            user.setPassword(userDto.getPassword());
+            user.setRole(userDto.getRole());
             
-            productRepo.save(product);
+            userRepo.save(user);
             
-        }
+        }   
         catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
-            return "redirect:/product";
+            return "redirect:/user";
         }
-        return "redirect:/product";
+        return "redirect:/user";
     }
 
     @GetMapping("/delete")
-    public String deleteProduct(
+    public String deleteUser(
             @RequestParam int id
         ) {
         try {
-            product product = productRepo.findById(id).get();
+            user user = userRepo.findById(id).get();
 
-            Path imagePath = Paths.get("public/image/" + product.getImage());
+            Path imagePath = Paths.get("public/image/" + user.getProfile());
 
             try {
                 Files.deleteIfExists(imagePath);
@@ -190,12 +190,12 @@ public class productController {
                 System.out.println("Exception: " + e.getMessage());
             }
 
-            productRepo.delete(product);
+            userRepo.delete(user);
         }
         catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
-            return "redirect:/product";
+            return "redirect:/user";
         }
-        return "redirect:/product";
+        return "redirect:/user";
     }
 }

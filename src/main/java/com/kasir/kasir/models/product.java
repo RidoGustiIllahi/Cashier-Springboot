@@ -24,7 +24,7 @@ public class product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int idProduct;
 
     private String name;
     private String description;
@@ -33,7 +33,7 @@ public class product {
     private int stock;
 
     public int getId() {
-        return id;
+        return idProduct;
     }
     public String getName() {
         return name;
@@ -51,8 +51,8 @@ public class product {
         return stock;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int idProduct) {
+        this.idProduct = idProduct;
     }
     public void setName(String name) {
         this.name = name;
