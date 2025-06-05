@@ -1,47 +1,56 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-  </head>
-  <body>
-    <h1 class="text-center my-4">Product</h1>
-    <a class="btn btn-primary"  href="/product/create">Create Product</a>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Name</th>
-          <th scope="col">Image</th>
-          <th scope="col">Price</th>
-          <th scope="col">Description</th>
-          <th scope="col">Stock</th>
-          <th scope="col">Actions</th>
-
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="product : ${products}">
-          <td th:text="${product.id}"></td>
-          <td th:text="${product.name}"></td>
-          <td>
-            <img th:src="@{'/image/' + ${product.image}}" alt="..." width="100">
-          </td>
-          <td th:text="${product.price}"></td>
-          <td th:text="${product.description}"></td>
-          <td th:text="${product.stock}"></td>
-          <td style="white-space:nowrap">
-            <a class="btn btn-primary btn-sm"  
-                th:href="@{/product/edit(id=${product.id})}">Edit</a>
-            <a class="btn btn-danger btn-sm"
-                th:href="@{/product/delete(id=${product.id})}"
-                onclick="return confirm('Are you sure?')">Delete</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/pages/products/productsList.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Product Management</h1>
     
-  </body>
+    <div class="product-grid">
+      <!-- Product Card -->
+      <div class="product-card" th:each="product : ${products}">
+        <div class="product-image-container">
+          <img class="product-image" th:src="@{'/image/' + ${product.image}}" alt="Product Image">
+          <div class="product-badge" 
+               th:classappend="${product.stock == 0} ? '' : 'stock'"
+               th:text="${product.stock == 0} ? 'Sold Out' : (${product.stock < 10} ? 'Low Stock' : 'In Stock')">
+          </div>
+        </div>
+        
+        <div class="product-content">
+          <h3 class="product-name" th:text="${product.name}"></h3>
+          <div class="product-price" th:text="'Rp ' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}"></div>
+          <div class="product-stock" th:text="'Stock: ' + ${product.stock}"></div>
+        </div>
+        
+        <div class="product-actions">
+          <button class="btn" 
+                  th:href="@{/product/edit(id=${product.id})}">
+            <i class="material-icons">edit</i>
+          </button>
+          <button class="btn delete"
+                  th:href="@{/product/delete(id=${product.id})}"
+                  onclick="return confirm('Delete this product?')">
+            <i class="material-icons">delete</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button class="fab" onclick="window.location.href='/product/create'">
+    <i class="material-icons">add</i>
+  </button>
+</body>
 </html>
