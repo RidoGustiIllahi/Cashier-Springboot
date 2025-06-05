@@ -1,74 +1,116 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Create User</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/pages/users/createUser.css">
   </head>
   <body>
     <div class="container">
-        <div class="row">
-            <div class="col-md-8 mx-auto rounded border p-4 m-4">
-                <h2 class="text-center mb-5">New User</h2>
+      <div class="user-form-container">
+        <h2 class="user-form-title">New User</h2>
 
-                <form method="post" enctype="multipart/form-data" th:object="${userDto}">
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Name</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" th:field="${userDto.name}">
-                            <p th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger"
-                                th:errors="${userDto.name}"></p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Profile</label>
-                        <div class="col-sm-8">
-                            <input type="file" class="form-control" th:field="${userDto.profile}">
-                            <p th:if="${#fields.hasErrors('profile')}" th:errorclass="text-danger"
-                                th:errors="${userDto.profile}"></p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Username</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" th:field="${userDto.username}">
-                            <p th:if="${#fields.hasErrors('username')}" th:errorclass="text-danger"
-                                th:errors="${userDto.username}"></p>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Password</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" th:field="${userDto.password}">
-                            <p th:if="${#fields.hasErrors('password')}" th:errorclass="text-danger"
-                                th:errors="${userDto.password}"></p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Role</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" th:field="${userDto.role}">
-                            <p th:if="${#fields.hasErrors('role')}" th:errorclass="text-danger"
-                                th:errors="${userDto.role}"></p>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-4 offset-sm-4 d-grid">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                        <div class="col-sm-4 offset-sm-4 d-grid">
-                            <a class="btn btn-outline-primary" href="/user">Cancel</a>
-                        </div>
-                    </div>
-
-                </form>
+        <form method="post" enctype="multipart/form-data" th:object="${userDto}">
+          <div class="form-row">
+            <label class="form-label">Name</label>
+            <div class="form-control-container">
+              <input class="form-control" th:field="${userDto.name}" placeholder="Enter full name">
+              <p th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger"
+                  th:errors="${userDto.name}"></p>
             </div>
-        </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">Profile</label>
+            <div class="form-control-container">
+              <div class="file-input-container">
+                <label class="file-input-label">
+                  <span class="file-input-text" id="fileInputText">Choose profile picture</span>
+                  <i class="material-icons file-input-icon">cloud_upload</i>
+                  <input type="file" class="file-input" th:field="${userDto.profile}" id="profileInput" accept="image/*">
+                </label>
+              </div>
+              <p th:if="${#fields.hasErrors('profile')}" th:errorclass="text-danger"
+                  th:errors="${userDto.profile}"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">Username</label>
+            <div class="form-control-container">
+              <input class="form-control" th:field="${userDto.username}" placeholder="Enter username">
+              <p th:if="${#fields.hasErrors('username')}" th:errorclass="text-danger"
+                  th:errors="${userDto.username}"></p>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <label class="form-label">Password</label>
+            <div class="form-control-container password-field">
+              <input type="password" class="form-control" th:field="${userDto.password}" placeholder="Enter password" id="passwordInput">
+              <button type="button" class="password-toggle" id="togglePassword">
+                <i class="material-icons">visibility_off</i>
+              </button>
+              <p th:if="${#fields.hasErrors('password')}" th:errorclass="text-danger"
+                  th:errors="${userDto.password}"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">Role</label>
+            <div class="form-control-container">
+              <select class="form-control" th:field="${userDto.role}">
+                <option value="">Select role</option>
+                <option value="ADMIN">Admin</option>
+                <option value="USER">User</option>
+                <option value="CASHIER">Cashier</option>
+              </select>
+              <p th:if="${#fields.hasErrors('role')}" th:errorclass="text-danger"
+                  th:errors="${userDto.role}"></p>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary">
+              <i class="material-icons" style="margin-right: 8px;">person_add</i>
+              Create User
+            </button>
+            <a class="btn btn-outline-primary" href="/user">
+              <i class="material-icons" style="margin-right: 8px;">cancel</i>
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
     </div>
+
+    <script>
+      // Password toggle functionality
+      const togglePassword = document.querySelector('#togglePassword');
+      const passwordInput = document.querySelector('#passwordInput');
+      
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="material-icons">visibility_off</i>' : '<i class="material-icons">visibility</i>';
+      });
+
+      // File input display
+      const profileInput = document.querySelector('#profileInput');
+      const fileInputText = document.querySelector('#fileInputText');
+      
+      profileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          fileInputText.textContent = this.files[0].name;
+        }
+      });
+    </script>
   </body>
 </html>
