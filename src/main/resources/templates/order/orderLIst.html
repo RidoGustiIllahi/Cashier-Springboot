@@ -17,6 +17,7 @@
           <th scope="col">ID User</th>
           <th scope="col">Cashier</th>
           <th scope="col">Date</th>
+          <th scope="col">Total</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -26,6 +27,7 @@
           <td th:text="${order.user.idUser}"></td>
           <td th:text="${order.user.name}"></td>
           <td th:text="${order.orderDate}"></td>
+          <td th:text="${order.totalPrice}"></td>
           <td style="white-space:nowrap">
             <a class="btn btn-primary btn-sm"  
                 th:href="@{/order/edit(idOrder=${order.idOrder})}">Edit</a>
