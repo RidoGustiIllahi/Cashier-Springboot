@@ -98,11 +98,11 @@ public class userController {
     @GetMapping("/edit")
     public String showEditPage(
             Model model,
-            @RequestParam int id
+            @RequestParam int idUser
         ) {
 
         try {
-            user user = userRepo.findById(id).get();
+            user user = userRepo.findById(idUser).get();
             model.addAttribute("user", user);
 
             userDto userDto = new userDto();
@@ -123,13 +123,13 @@ public class userController {
     @PostMapping("/edit")
     public String editUser(
             Model model,
-            @RequestParam int id,
+            @RequestParam int idUser,
             @Valid @ModelAttribute userDto userDto,
             BindingResult result
             ) {
 
         try {
-            user user = userRepo.findById(id).get();
+            user user = userRepo.findById(idUser).get();
             model.addAttribute("user", user);
             
             if (result.hasErrors()) {
@@ -176,10 +176,10 @@ public class userController {
 
     @GetMapping("/delete")
     public String deleteUser(
-            @RequestParam int id
+            @RequestParam int idUser
         ) {
         try {
-            user user = userRepo.findById(id).get();
+            user user = userRepo.findById(idUser).get();
 
             Path imagePath = Paths.get("public/image/" + user.getProfile());
 

@@ -1,22 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package com.kasir.kasir.models;
+
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-/**
- *
- * @author Rido Gusti Illahi
- */
-
-
 @Entity
 @Table(name = "product")
 
@@ -32,7 +23,10 @@ public class product {
     private String image;
     private int stock;
 
-    public int getId() {
+    @OneToMany(mappedBy = "product")
+    private List<orderList> orderLists;
+
+    public int getIdProduct() {
         return idProduct;
     }
     public String getName() {
@@ -50,8 +44,12 @@ public class product {
     public int getStock() {
         return stock;
     }
+    public List<orderList> getOrderLists() {
+        return orderLists;
+    }
 
-    public void setId(int idProduct) {
+    
+    public void setIdProduct(int idProduct) {
         this.idProduct = idProduct;
     }
     public void setName(String name) {
@@ -68,5 +66,8 @@ public class product {
     }
     public void setStock(int stock) {
         this.stock = stock;
+    }
+    public void setOrderLists(List<orderList> orderLists) {
+        this.orderLists = orderLists;
     }
 }

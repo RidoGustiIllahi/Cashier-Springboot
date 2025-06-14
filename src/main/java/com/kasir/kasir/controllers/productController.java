@@ -98,11 +98,11 @@ public class productController {
     @GetMapping("/edit")
     public String showEditPage(
             Model model,
-            @RequestParam int id
+            @RequestParam int idProduct
         ) {
 
         try {
-            product product = productRepo.findById(id).get();
+            product product = productRepo.findById(idProduct).get();
             model.addAttribute("product", product);
 
             productDto productDto = new productDto();
@@ -123,13 +123,13 @@ public class productController {
     @PostMapping("/edit")
     public String editProduct(
             Model model,
-            @RequestParam int id,
+            @RequestParam int idProduct,
             @Valid @ModelAttribute productDto productDto,
             BindingResult result
             ) {
 
         try {
-            product product = productRepo.findById(id).get();
+            product product = productRepo.findById(idProduct).get();
             model.addAttribute("product", product);
             
             if (result.hasErrors()) {
@@ -176,10 +176,10 @@ public class productController {
 
     @GetMapping("/delete")
     public String deleteProduct(
-            @RequestParam int id
+            @RequestParam int idProduct
         ) {
         try {
-            product product = productRepo.findById(id).get();
+            product product = productRepo.findById(idProduct).get();
 
             Path imagePath = Paths.get("public/image/" + product.getImage());
 
