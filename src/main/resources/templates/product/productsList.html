@@ -35,11 +35,11 @@
         
         <div class="product-actions">
           <button class="btn" 
-                  th:href="@{/product/edit(id=${product.id})}">
+                  th:href="@{/product/edit(id=${product.idProduct})}">
             <i class="material-icons">edit</i>
           </button>
           <button class="btn delete"
-                  th:href="@{/product/delete(id=${product.id})}"
+                  th:href="@{/product/delete(id=${product.idProduct})}"
                   onclick="return confirm('Delete this product?')">
             <i class="material-icons">delete</i>
           </button>
