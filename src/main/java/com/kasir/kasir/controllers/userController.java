@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kasir.kasir.models.user;
 import com.kasir.kasir.models.userDto;
 import com.kasir.kasir.repository.userRepository;
+import com.kasir.kasir.services.UserSession;
 
 import jakarta.validation.Valid;
 
@@ -34,8 +35,20 @@ public class userController {
     @Autowired
     private userRepository userRepo;
 
+    @Autowired
+    private UserSession userSession;
+
+    private boolean isAdminAccess() {
+        return userSession.isLoggedIn() && "ADMIN".equals(userSession.getLoggedInUser().getRole());
+    }
+
     @GetMapping({"", "/"})
     public String showUsersList(Model model) {
+
+        if (!isAdminAccess()) {
+            return "redirect:/dashboard";
+        }
+
         List<user> users = userRepo.findAll();
         model.addAttribute("users", users);
         return "user/userList";
@@ -43,6 +56,11 @@ public class userController {
 
     @GetMapping("/create")
     public String showCreateUserForm(Model model) {
+        
+        if (!isAdminAccess()) {
+            return "redirect:/dashboard";
+        }
+
         userDto userDto = new userDto();
         model.addAttribute("userDto", userDto);
         return "user/createUser";
@@ -100,6 +118,11 @@ public class userController {
             Model model,
             @RequestParam int idUser
         ) {
+
+
+        if (!isAdminAccess()) {
+            return "redirect:/dashboard";
+        }
 
         try {
             user user = userRepo.findById(idUser).get();
@@ -178,6 +201,11 @@ public class userController {
     public String deleteUser(
             @RequestParam int idUser
         ) {
+        
+        if (!isAdminAccess()) {
+            return "redirect:/dashboard";
+        }
+
         try {
             user user = userRepo.findById(idUser).get();
 

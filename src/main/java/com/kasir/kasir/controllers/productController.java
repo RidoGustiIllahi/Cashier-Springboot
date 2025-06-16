@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kasir.kasir.models.product;
 import com.kasir.kasir.models.productDto;
 import com.kasir.kasir.repository.productRepository;
+import com.kasir.kasir.services.UserSession;
 
 import jakarta.validation.Valid;
 
@@ -34,6 +35,13 @@ public class productController {
     @Autowired
     private productRepository productRepo;
 
+    @Autowired
+    private UserSession userSession;
+
+    private boolean isAdminAccess() {
+        return userSession.isLoggedIn() && "ADMIN".equals(userSession.getLoggedInUser().getRole());
+    }
+
     @GetMapping({"", "/"})
     public String showProductsList(Model model) {
         List<product> products = productRepo.findAll();
@@ -43,6 +51,11 @@ public class productController {
 
     @GetMapping("/create")
     public String showCreateProductForm(Model model) {
+
+        if (!isAdminAccess()) {
+            return "redirect:/dashboard";
+        }
+
         productDto productDto = new productDto();
         model.addAttribute("productDto", productDto);
         return "product/createProduct";
@@ -100,6 +113,10 @@ public class productController {
             Model model,
             @RequestParam int idProduct
         ) {
+
+        if (!isAdminAccess()) {
+            return "redirect:/dashboard";
+        }
 
         try {
             product product = productRepo.findById(idProduct).get();
@@ -178,6 +195,11 @@ public class productController {
     public String deleteProduct(
             @RequestParam int idProduct
         ) {
+
+        if (!isAdminAccess()) {
+            return "redirect:/dashboard";
+        }
+        
         try {
             product product = productRepo.findById(idProduct).get();
 
