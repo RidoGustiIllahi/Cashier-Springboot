@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Riwayat Order</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+        }
+        
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%) !important;
+        }
+        
+        .history-container {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 1200px;
+        }
+        
+        .history-title {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .order-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .order-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e3e6f0;
+            vertical-align: top;
+        }
+        
+        .order-table tr:nth-child(even) {
+            background-color: #f8f9fc;
+        }
+        
+        .order-table tr:hover {
+            background-color: #f1f3f9;
+        }
+        
+        .product-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .product-list li {
+            margin-bottom: 5px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .total-price {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .order-date {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-cash-stack me-2"></i>Cashier App
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/kasir}" th:if="@{isAdmin}">
+                            <i class="bi bi-cart me-1"></i>Kasir
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/product}" th:if="@{isAdmin}">
+                            <i class="bi bi-box-seam me-1"></i>Product
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/user}" th:if="@{isAdmin}">
+                            <i class="bi bi-people me-1"></i>User
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/kasir/riwayat}" th:if="@{isAdmin}">
+                            <i class="bi bi-clock-history me-1"></i>Riwayat Order
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a th:href="@{/logout}" class="nav-link">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="history-container">
+        <h2 class="history-title">
+            <i class="bi bi-clock-history me-2"></i>Riwayat Order
+        </h2>
+        
+        <div class="table-responsive">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>ID Order</th>
+                        <th>Kasir</th>
+                        <th>Tanggal Order</th>
+                        <th>Total</th>
+                        <th>Detail Produk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.idOrder}"></td>
+                        <td>
+                            <div th:text="${order.user.name}"></div>
+                            <small class="text-muted" th:text="'ID: ' + ${order.user.idUser}"></small>
+                        </td>
+                        <td class="order-date" th:text="${order.orderDate}"></td>
+                        <td class="total-price" th:text="${'Rp ' + #numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td>
+                            <ul class="product-list">
+                                <li th:each="ol : ${order.orderLists}">
+                                    <span th:text="${ol.product.name}"></span> - 
+                                    <span th:text="${'Rp ' + #numbers.formatDecimal(ol.product.price, 1, 'COMMA', 2, 'POINT')}"></span>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,47 +1,170 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-  </head>
-  <body>
-    <h1 class="text-center my-4">Product</h1>
-    <a class="btn btn-primary"  href="/product/create">Create Product</a>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Name</th>
-          <th scope="col">Image</th>
-          <th scope="col">Price</th>
-          <th scope="col">Description</th>
-          <th scope="col">Stock</th>
-          <th scope="col">Actions</th>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #4e73df;
+      --danger-color: #e74a3b;
+      --success-color: #1cc88a;
+    }
 
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="product : ${products}">
-          <td th:text="${product.idProduct}"></td>
-          <td th:text="${product.name}"></td>
-          <td>
-            <img th:src="@{'/image/' + ${product.image}}" alt="..." width="100">
-          </td>
-          <td th:text="${product.price}"></td>
-          <td th:text="${product.description}"></td>
-          <td th:text="${product.stock}"></td>
-          <td style="white-space:nowrap">
-            <a class="btn btn-primary btn-sm"  
-                th:href="@{/product/edit(idProduct=${product.idProduct})}">Edit</a>
-            <a class="btn btn-danger btn-sm"
-                th:href="@{/product/delete(idProduct=${product.idProduct})}"
-                onclick="return confirm('Are you sure?')">Delete</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-  </body>
+    body {
+      background-color: #f8f9fc;
+    }
+
+    .navbar {
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+      background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%) !important;
+    }
+
+    .product-card {
+      border: none;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      transition: transform 0.3s ease;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-img {
+      height: 200px;
+      object-fit: cover;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .product-price {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .stock-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.8rem;
+    }
+
+    .action-buttons .btn {
+      margin-right: 5px;
+    }
+
+    .create-btn {
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+
+    .search-box {
+      max-width: 300px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-cash-stack me-2"></i>Cashier App
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/kasir}" th:if="@{isAdmin}">
+              <i class="bi bi-cart me-1"></i>Kasir
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" th:href="@{/product}" th:if="@{isAdmin}">
+              <i class="bi bi-box-seam me-1"></i>Product
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/user}" th:if="@{isAdmin}">
+              <i class="bi bi-people me-1"></i>User
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/kasir/riwayat}" th:if="@{isAdmin}">
+              <i class="bi bi-clock-history me-1"></i>Riwayat Order
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a th:href="@{/logout}" class="nav-link">
+              <i class="bi bi-box-arrow-right me-1"></i>Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 mb-0 text-gray-800">
+        <i class="bi bi-box-seam me-2"></i>Product Management
+      </h1>
+      <div class="d-flex">
+        <form class="d-flex me-3 search-box">
+          <input class="form-control" type="search" placeholder="Search products..." aria-label="Search">
+          <button class="btn btn-outline-primary ms-2" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+        <a class="btn btn-primary create-btn" href="/product/create">
+          <i class="bi bi-plus-circle me-1"></i>Create Product
+        </a>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+      <div class="col" th:each="product : ${products}">
+        <div class="card product-card">
+          <span th:class="${product.stock == 0} ? 'stock-badge badge bg-danger' : 'stock-badge badge bg-success'"
+            th:text="${product.stock} + ' in stock'">
+          </span>
+          <img th:src="@{'/image/' + ${product.image}}" class="card-img-top product-img" alt="Product Image">
+          <div class="card-body">
+            <h5 class="card-title" th:text="${product.name}"></h5>
+            <p class="card-text text-muted" th:text="${product.description}"></p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="product-price"
+                th:text="${'Rp' + #numbers.formatDecimal(product.price, 1, 2, 'COMMA')}"></span>
+              <div class="action-buttons">
+                <a class="btn btn-sm btn-outline-primary" th:href="@{/product/edit(idProduct=${product.idProduct})}">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a class="btn btn-sm btn-outline-danger" th:href="@{/product/delete(idProduct=${product.idProduct})}"
+                  onclick="return confirm('Are you sure you want to delete this product?')">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${products.empty}" class="text-center py-5">
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        No products found. <a href="/product/create" class="alert-link">Create a new product</a> to get started.
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>

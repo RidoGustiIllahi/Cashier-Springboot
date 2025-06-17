@@ -22,7 +22,7 @@ public class AuthController {
     @GetMapping("/login")
     public String loginForm() {
         if (userSession.isLoggedIn()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
         return "auth/login";
     }
@@ -36,7 +36,7 @@ public class AuthController {
         user user = authService.authenticate(username, password);
         if (user != null) {
             userSession.login(user);
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         } else {
             model.addAttribute("error", "Username atau password salah");
             return "auth/login";

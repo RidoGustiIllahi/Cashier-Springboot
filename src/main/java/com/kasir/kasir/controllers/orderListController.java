@@ -19,13 +19,13 @@ import com.kasir.kasir.models.user;
 import com.kasir.kasir.repository.orderListRepository;
 import com.kasir.kasir.repository.orderRepository;
 import com.kasir.kasir.repository.productRepository;
+import com.kasir.kasir.services.UserSession;
 import com.kasir.kasir.services.cartService;
-
 
 @Controller
 @RequestMapping("/kasir")
 public class orderListController {
-    
+
     @Autowired
     private productRepository productRepo;
 
@@ -37,18 +37,36 @@ public class orderListController {
 
     @Autowired
     private orderListRepository orderListRepo;
-    
+
+    @Autowired
+    private UserSession userSession;
+
+    private boolean checkLogin() {
+        return userSession.isLoggedIn();
+    }
+
     @GetMapping({"", "/"})
     public String showProductsList(Model model) {
+
+        if (!checkLogin()) {
+            return "redirect:/login";
+        }
+
         List<product> products = productRepo.findAll();
         model.addAttribute("products", products);
         model.addAttribute("cartItems", cartService.getCartItems());
         model.addAttribute("total", cartService.getTotalPrice());
+
         return "kasir/kasir";
     }
 
     @PostMapping("/addToCart")
     public String addToCart(@RequestParam("idProduct") int idProduct) {
+
+        if (!checkLogin()) {
+            return "redirect:/login";
+        }
+
         product p = productRepo.findById(idProduct).get();
         if (p != null) {
             cartService.addProduct(p);
@@ -60,6 +78,11 @@ public class orderListController {
 
     @PostMapping("/removeFromCart")
     public String removeFromCart(@RequestParam("idProduct") int idProduct) {
+
+        if (!checkLogin()) {
+            return "redirect:/login";
+        }
+
         product p = productRepo.findById(idProduct).get();
         if (p != null) {
             cartService.removeProduct(p);
@@ -71,15 +94,18 @@ public class orderListController {
 
     @PostMapping("/checkout")
     public String checkout() {
-        
+
+        if (!checkLogin()) {
+            return "redirect:/login";
+        }
+
         Date createdAt = new Date();
 
         order newOrder = new order();
         newOrder.setOrderDate(createdAt.toString());
 
-        user dummyUser = new user();
-        dummyUser.setIdUser(2);
-        newOrder.setUser(dummyUser);
+        user loggedInUser = userSession.getLoggedInUser();
+        newOrder.setUser(loggedInUser);
         newOrder.setTotalPrice(cartService.getTotalPrice());
 
         orderRepo.save(newOrder);
@@ -96,22 +122,41 @@ public class orderListController {
     }
 
     @PostMapping("/emptyCart")
-public String emptyCart() {
-    // Get all cart items first
-    List<product> itemsInCart = cartService.getCartItems();
-    
-    // Return stock for each product in cart
-    for (product item : itemsInCart) {
-        Optional<product> productOpt = productRepo.findById(item.getIdProduct());
-        if (productOpt.isPresent()) {
-            product product = productOpt.get();
-            product.setStock(product.getStock() + 1); // Or + quantity if cart items have quantities
-            productRepo.save(product);
+    public String emptyCart() {
+
+        if (!checkLogin()) {
+            return "redirect:/login";
         }
+
+        // Get all cart items first
+        List<product> itemsInCart = cartService.getCartItems();
+
+        // Return stock for each product in cart
+        for (product item : itemsInCart) {
+            Optional<product> productOpt = productRepo.findById(item.getIdProduct());
+            if (productOpt.isPresent()) {
+                product product = productOpt.get();
+                product.setStock(product.getStock() + 1); // Or + quantity if cart items have quantities
+                productRepo.save(product);
+            }
+        }
+
+        // Empty the cart
+        cartService.emptyProducts();
+        return "redirect:/kasir";
     }
-    
-    // Empty the cart
-    cartService.emptyProducts();
-    return "redirect:/kasir";
-}
+
+    @GetMapping("/riwayat")
+    public String getAllOrderLists(Model model) {
+
+        if (!checkLogin()) {
+            return "redirect:/login";
+        }
+
+        List<order> orders = orderRepo.findAll();
+        model.addAttribute("orders", orders);
+
+        return "kasir/riwayatOrder";
+    }
+
 }

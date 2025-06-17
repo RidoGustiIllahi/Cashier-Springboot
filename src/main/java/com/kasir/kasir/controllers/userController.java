@@ -46,7 +46,7 @@ public class userController {
     public String showUsersList(Model model) {
 
         if (!isAdminAccess()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
 
         List<user> users = userRepo.findAll();
@@ -58,7 +58,7 @@ public class userController {
     public String showCreateUserForm(Model model) {
         
         if (!isAdminAccess()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
 
         userDto userDto = new userDto();
@@ -121,7 +121,7 @@ public class userController {
 
 
         if (!isAdminAccess()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
 
         try {
@@ -203,7 +203,7 @@ public class userController {
         ) {
         
         if (!isAdminAccess()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
 
         try {

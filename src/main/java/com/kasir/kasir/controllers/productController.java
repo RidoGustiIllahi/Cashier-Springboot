@@ -44,6 +44,11 @@ public class productController {
 
     @GetMapping({"", "/"})
     public String showProductsList(Model model) {
+
+        if (!isAdminAccess()) {
+            return "redirect:/kasir";
+        }
+
         List<product> products = productRepo.findAll();
         model.addAttribute("products", products);
         return "product/productsList";
@@ -53,7 +58,7 @@ public class productController {
     public String showCreateProductForm(Model model) {
 
         if (!isAdminAccess()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
 
         productDto productDto = new productDto();
@@ -115,7 +120,7 @@ public class productController {
         ) {
 
         if (!isAdminAccess()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
 
         try {
@@ -197,7 +202,7 @@ public class productController {
         ) {
 
         if (!isAdminAccess()) {
-            return "redirect:/dashboard";
+            return "redirect:/kasir";
         }
         
         try {
